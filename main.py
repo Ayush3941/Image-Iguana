@@ -150,9 +150,10 @@ def processImage(filename, format_conversion=None, image_processing=None):
     # --- Final output filename ---
     newFilename = f"static/{file_base}_processed.{new_format}"
     cv2.imwrite(newFilename, imgProcessed)
+    
+    img = cv2.filter2D(img, -1, kernel)
+    base += "_sharpened"
     return newFilename
-                img = cv2.filter2D(img, -1, kernel)
-                base += "_sharpened"
 
     # 2. Apply format conversion if selected
     if format_conversion:
