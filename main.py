@@ -60,30 +60,10 @@ def allowed_file(filename):
 def processImage(filename, format_conversion=None, image_processing=None):
     print(f"Format Conversion: {format_conversion}, Image Processing: {image_processing}, Filename: {filename}")
     img = cv2.imread(f"uploads/{filename}")
-    
+
     if img is None:
         print(f"Failed to load image: uploads/{filename}")
         return None
-
-    if format_conversion:
-        match format_conversion:
-            case "cwebp":
-                newFilename = f"static/{filename.split('.')[0]}.webp"
-                cv2.imwrite(newFilename, img)
-                return newFilename
-            case "cpng":
-                newFilename = f"static/{filename.split('.')[0]}.png"
-                cv2.imwrite(newFilename, img)
-                return newFilename
-            case "cjpg":
-                newFilename = f"static/{filename.split('.')[0]}.jpg"
-                cv2.imwrite(newFilename, img)
-                return newFilename
-            case "cjpeg":
-                newFilename = f"static/{filename.split('.')[0]}.jpeg"
-                cv2.imwrite(newFilename, img)
-                return newFilename
-
 
     output_dir = "static/uploads"
     if not os.path.exists(output_dir):
@@ -98,40 +78,22 @@ def processImage(filename, format_conversion=None, image_processing=None):
             case "cgray":
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 base += "_gray"
-                imgProcessed = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                newFilename = f"static/{filename}"
-                cv2.imwrite(newFilename, imgProcessed)
             case "histeq":
-                imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-                imgProcessed = cv2.equalizeHist(imgGray)
-                newFilename = f"static/{filename.split('.')[0]}_histeq.png"
-                cv2.imwrite(newFilename, imgProcessed)
                 img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
                 img = cv2.equalizeHist(img)
                 base += "_histeq"
             case "blur":
-                imgProcessed = cv2.GaussianBlur(img, (5, 5), 0)
-                newFilename = f"static/{filename.split('.')[0]}_blurred.png"
-                cv2.imwrite(newFilename, imgProcessed)
                 img = cv2.GaussianBlur(img, (5, 5), 0)
                 base += "_blurred"
             case "canny":
-                imgProcessed = cv2.Canny(img, 100, 200)
-                newFilename = f"static/{filename.split('.')[0]}_edges.png"
-                cv2.imwrite(newFilename, imgProcessed)
                 img = cv2.Canny(img, 100, 200)
                 base += "_edges"
             case "rotate":
                 img = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
                 base += "_rotated"
-                imgProcessed = cv2.rotate(img, cv2.ROTATE_90_CLOCKWISE)
-                newFilename = f"static/{filename.split('.')[0]}_rotated.png"
-                cv2.imwrite(newFilename, imgProcessed)
             case "sharpen":
                 kernel = np.array([[0, -1, 0], [-1, 5, -1], [0, -1, 0]])
-                imgProcessed = cv2.filter2D(img, -1, kernel)
-                newFilename = f"static/{filename.split('.')[0]}_sharpened.png"
-                cv2.imwrite(newFilename, imgProcessed)
+                img = cv2.filter2D(img, -1, kernel)
 
     file_format = filename.rsplit('.', 1)[1].lower()
     new_format = file_format
@@ -148,27 +110,7 @@ def processImage(filename, format_conversion=None, image_processing=None):
             new_format = "jpeg"
 
     # --- Final output filename ---
-    newFilename = f"static/{file_base}_processed.{new_format}"
-    cv2.imwrite(newFilename, imgProcessed)
-    
-    img = cv2.filter2D(img, -1, kernel)
-    base += "_sharpened"
-    return newFilename
-
-    # 2. Apply format conversion if selected
-    if format_conversion:
-        match format_conversion:
-            case "cwebp":
-                ext = "webp"
-            case "cpng":
-                ext = "png"
-            case "cjpg":
-                ext = "jpg"
-            case "cjpeg":
-                ext = "jpeg"
-
-    # 3. Save the final image
-    newFilename = f"{output_dir}/{base}.{ext}"
+    newFilename = f"static/{base}_processed.{new_format}"
     cv2.imwrite(newFilename, img)
     return newFilename
 
