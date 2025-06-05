@@ -22,7 +22,7 @@
         <div class="mb-3">
 
             <label for="formFile" class="form-label my-2">Upload image(s) to edit</label>
-            <input class="form-control" type="file" name="file" id="formFile" onchange="previewImage(event)"  multiple accept=".jpg, .jpeg, .png, .gif, .webp">
+            <input class="form-control" type="file" name="file" id="formFile" onchange="previewImage(event)" accept=".jpg, .jpeg, .png, .gif, .webp">
             <img id="preview" src="#" alt="Image Preview" style="display:none; max-width:300px; margin-top:10px;"/>
             <div class="form-text text-muted">You can select multiple files by holding Ctrl (or Cmd on Mac) while clicking, or by dragging multiple files.</div>
         </div>
@@ -61,6 +61,8 @@
     </form>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/caman@4.1.2/dist/caman.full.min.js"></script>
+
 <script>
 function previewImage(event) {
     const preview = document.getElementById('preview');
@@ -74,4 +76,78 @@ function previewImage(event) {
     }
 }
 </script>
+
+
+
+<script >
+const preview = document.getElementById('preview');
+const imageProcessingSelect = document.getElementById('imageProcessingSelect');
+let originalSrc = null;
+
+function previewImage(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const url = URL.createObjectURL(file);
+    preview.src = url;
+    preview.style.display = 'block';
+    originalSrc = url;
+    // Reset any previous filter when a new image loads
+    imageProcessingSelect.value = "default";
+  } else {
+    preview.src = '#';
+    preview.style.display = 'none';
+  }
+}
+
+function applyFilter() {
+  if (!originalSrc) return;
+
+  // Reload the original image before applying filter to avoid stacking
+  Caman('#preview', originalSrc, function () {
+    this.revert(false);
+
+    const val = imageProcessingSelect.value;
+
+    switch(val) {
+      case 'cgray':
+        this.greyscale();
+        break;
+
+      case 'histeq':
+        // Approximate B&W contrast + grain: grayscale + increased contrast + noise
+        this.greyscale().contrast(20).noise(10);
+        break;
+
+      case 'blur':
+        this.stackBlur(5);
+        break;
+
+      case 'canny':
+        // No built-in edge detection, approximate by high contrast + posterize
+        this.contrast(40).posterize(2);
+        break;
+
+      case 'rotate':
+        this.rotate(90);
+        break;
+
+      case 'sharpen':
+        this.sharpen(15);
+        break;
+
+      default:
+        // No effect
+        break;
+    }
+
+    this.render();
+  });
+}
+
+// Event Listeners
+document.getElementById('formFile').addEventListener('change', previewImage);
+imageProcessingSelect.addEventListener('change', applyFilter);
+
+</script>
+
 {% endblock %}
