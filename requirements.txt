@@ -6,3 +6,5 @@ Flask-Login
 Flask-SQLAlchemy
 flask_wtf
 Pillow
+email_validator
+

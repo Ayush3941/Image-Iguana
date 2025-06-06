@@ -16,32 +16,36 @@
                             {% endfor %}
                         {% endif %}
                     {% endwith %}
-                    <form method="POST" action="{{ url_for('signup') }}">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <form method="POST" action="{{ url_for('main.signup') }}">
+                        {{ form.hidden_tag() }}
+
                         <div class="form-group mb-3">
-                            <label for="username">Username</label>
-                            <input type="text" class="form-control" id="username" name="username" required>
+                            {{ form.username.label(class="form-label") }}
+                            {{ form.username(class="form-control", id="username") }}
                         </div>
+
                         <div class="form-group mb-3">
-                            <label for="email">Email</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
+                            {{ form.email.label(class="form-label") }}
+                            {{ form.email(class="form-control", id="email") }}
                         </div>
+
                         <div class="form-group mb-3">
-                            <label for="password">Password</label>
+                            {{ form.password.label(class="form-label") }}
                             <div class="input-group">
-                                <input type="password" class="form-control" id="password" name="password" required>
-                                <button class="btn btn-outline-secondary" type="button" tabindex="-1" style="border-left:0; background:transparent;" onclick="togglePassword('password', this)">
+                                {{ form.password(class="form-control", id="password") }}
+                                <button class="btn btn-outline-secondary" type="button" tabindex="-1" onclick="togglePassword('password', this)">
                                     <i class="bi bi-eye" id="togglePasswordIcon"></i>
                                 </button>
                             </div>
                         </div>
-                        
+
                         <div class="d-grid gap-2">
-                            <button type="submit" class="btn btn-primary">Sign Up</button>
+                            {{ form.submit(class="btn btn-primary") }}
                         </div>
                     </form>
+
                     <div class="text-center mt-3">
-                        <p>Already have an account? <a href="{{ url_for('login') }}">Login here</a></p>
+                        <p>Already have an account? <a href="{{ url_for('main.login') }}">Login here</a></p>
                     </div>
                 </div>
             </div>

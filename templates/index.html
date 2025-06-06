@@ -17,48 +17,29 @@
 
     <h1 class="fs-3 text">ImageIguana - Edit your Image online!</h1>
 
-    <form action="/edit" method="post" enctype="multipart/form-data">
-        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-        <div class="mb-3">
+    <form method="POST"  enctype="multipart/form-data">
+    {{ form.hidden_tag() }}
 
-            <label for="formFile" class="form-label my-2">Upload image(s) to edit</label>
-            <input class="form-control" type="file" name="file" id="formFile" onchange="previewImage(event)" accept=".jpg, .jpeg, .png, .gif, .webp">
-            <img id="preview" src="#" alt="Image Preview" style="display:none; max-width:300px; margin-top:10px;"/>
-            <div class="form-text text-muted">You can select multiple files by holding Ctrl (or Cmd on Mac) while clicking, or by dragging multiple files.</div>
-        </div>
+    <div class="mb-3">
+        {{ form.file.label(class="form-label my-2") }}
+        {{ form.file(class="form-control", id="formFile", onchange="previewImage(event)", accept=".jpg,.jpeg,.png,.gif,.webp") }}
+        <img id="preview" src="#" alt="Image Preview" style="display:none; max-width:300px; margin-top:10px;" />
+        <div class="form-text text-muted">You can select multiple files by holding Ctrl (or Cmd on Mac).</div>
+    </div>
 
-        <!-- Dropdown for Format Conversions -->
-        <div class="form-floating mb-3">
-            <select name="format_conversion" class="form-select" id="formatConversionSelect"
-                aria-label="Format Conversion Select">
-                <option selected>Choose format conversion</option>
-                <option value="cpng">Convert to PNG</option>
-                <option value="cjpg">Convert to JPG</option>
-                <option value="cjpeg">Convert to JPEG</option>
-                <option value="cwebp">Convert to WEBP</option>
-            </select>
-            <label for="formatConversionSelect">Select Format Conversion</label>
-        </div>
+    <div class="form-floating mb-3">
+        {{ form.format_conversion(class="form-select", id="formatConversionSelect") }}
+        <label for="formatConversionSelect">Select Format Conversion</label>
+    </div>
 
-        <!-- Dropdown for Image Processing -->
-        <div class="form-floating mb-3">
-            <select name="image_processing" class="form-select" id="imageProcessingSelect"
-                aria-label="Image Processing Select">
-                <option selected>Choose image processing option</option>
-                <option value="cgray">Convert to Grayscale</option>
-                <option value="histeq">B&W - Contrast + Grain</option>
-                <option value="blur">Blur Image</option>
-                <option value="canny">Edge Image</option>
-                <option value="rotate">Rotate Clockwise</option>
-                <option value="sharpen">Sharpen Image</option>
-            </select>
-            <label for="imageProcessingSelect">Select Image Processing Option</label>
-        </div>
+    <div class="form-floating mb-3">
+        {{ form.image_processing(class="form-select", id="imageProcessingSelect") }}
+        <label for="imageProcessingSelect">Select Image Processing Option</label>
+    </div>
 
-        
+    {{ form.submit(class="btn btn-success my-4") }}
+</form>
 
-        <button type="submit" class="btn btn-success my-4">Submit</button>
-    </form>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/caman@4.1.2/dist/caman.full.min.js"></script>
