@@ -1,89 +1,15 @@
-# app/routes.py
-
-from flask import Blueprint, render_template, request, flash, redirect, url_for, send_from_directory, send_file
-from flask_login import login_user, login_required, logout_user, current_user
-from werkzeug.utils import secure_filename
-from .models import User
-from .utils import allowed_file, processImage
-from .forms import LoginForm, SignupForm, EditImageForm
-from . import db, login_manager
-import os, base64, tempfile, zipfile, shutil
+from flask import Blueprint, render_template, request, flash, redirect, url_for, send_file
+from flask_login import login_required
+from ..forms import EditImageForm
+from ..utils import allowed_file, processImage
 from PIL import Image
+import os, base64
 from io import BytesIO
+from werkzeug.utils import secure_filename
 
+image_bp = Blueprint('image', __name__)
 
-
-main = Blueprint('main', __name__)
-
-@main.route("/")
-def home():
-    if not current_user.is_authenticated:
-        return redirect(url_for('main.login'))
-    form = EditImageForm()
-    return render_template("index.html", form=form)
-
-
-@main.route("/login", methods=['GET', 'POST'])
-def login():
-    if current_user.is_authenticated:
-        return redirect(url_for('main.home'))
-
-    form = LoginForm()
-    if form.validate_on_submit():
-        user = User.query.filter_by(username=form.username.data).first()
-        if user and user.check_password(form.password.data):
-            login_user(user)
-            return redirect(url_for('main.home'))
-        else:
-            flash('Invalid username or password')
-
-    return render_template('login.html', form=form)
-
-@main.route("/signup", methods=['GET', 'POST'])
-def signup():
-    if current_user.is_authenticated:
-        return redirect(url_for('home'))
-
-    form = SignupForm()
-
-    if form.validate_on_submit():
-        username = form.username.data
-        email = form.email.data
-        password = form.password.data
-
-        if User.query.filter_by(username=username).first():
-            flash('Username already exists')
-            return redirect(url_for('main.signup'))
-
-        if User.query.filter_by(email=email).first():
-            flash('Email already registered')
-            return redirect(url_for('main.signup'))
-
-        user = User(username=username, email=email)
-        user.set_password(password)
-        db.session.add(user)
-        db.session.commit()
-
-        flash('Registration successful! Please login.')
-        return redirect(url_for('main.login'))
-
-    return render_template('signup.html', form=form)
-
-@main.route("/logout")
-@login_required
-def logout():
-    logout_user()
-    return redirect(url_for('main.login'))
-
-@main.route("/about")
-@login_required
-def about():
-    return render_template("about.html", title="About")
-
-
-
-
-@main.route("/", methods=["GET", "POST"])
+@image_bp.route("/edit", methods=["GET", "POST"])
 @login_required
 def edit():
     form = EditImageForm()
@@ -122,7 +48,7 @@ def edit():
             try:
                 if file and allowed_file(file.filename):
                     filename = secure_filename(file.filename)
-                    abra = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","uploads")
+                    abra = os.path.join(os.path.dirname(os.path.abspath(__file__)),"..","..","uploads")
 
                     file_path = os.path.join(abra, filename)
                     file.save(file_path)
@@ -143,7 +69,7 @@ def edit():
         if not processed_files:
             flash('No files were processed successfully')
             return redirect(url_for('main.home'))
-        print("dguqgwdviquwbdliqhwbdxiouqwgd    oiwydvweidv wiqh",processed_files)
+   
         if len(processed_files) == 1:
             download_filename = os.path.basename(processed_files[0])
             return send_file(
@@ -176,15 +102,3 @@ def edit():
         return response
 
     return render_template("index.html", form=form)
-
-
-@main.route("/usage")
-@login_required
-def usage():
-    return render_template("usage.html", title="Usage")
-
-@main.route("/download/<path:filename>")
-@login_required
-def download(filename):
-    file_path = os.path.join("static", filename)
-    return send_file(file_path, as_attachment=True)

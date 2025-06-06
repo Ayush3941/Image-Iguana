@@ -17,7 +17,7 @@
 
     <h1 class="fs-3 text">ImageIguana - Edit your Image online!</h1>
 
-    <form method="POST"  enctype="multipart/form-data">
+  <form method="POST"  action="{{ url_for('image.edit') }}" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
 
     <div class="mb-3">
