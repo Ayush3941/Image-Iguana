@@ -24,8 +24,12 @@ def create_app(config_class):
         def load_user(user_id):
             return db.session.get(User, int(user_id))
 
-        from .routes import register_routes
-        register_routes(app)
+        from .routes.auth import auth_bp
+        app.register_blueprint(auth_bp) 
+        from .routes.main import main_bp
+        app.register_blueprint(main_bp) 
+        from .routes.image_processing import image_bp
+        app.register_blueprint(image_bp) 
 
         db.create_all()  # optional: create tables if not already created
 
