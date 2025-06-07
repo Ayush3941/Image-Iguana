@@ -10,19 +10,23 @@ login_manager = LoginManager()
 def create_app(config_class):
     app = Flask(__name__, template_folder='../templates', static_folder='../static')
     app.config.from_object(config_class)
+    print("Using database:", app.config.get("SQLALCHEMY_DATABASE_URI"))
 
     db.init_app(app)
+    csrf.init_app(app)
     login_manager.init_app(app)
-    login_manager.login_view = 'auth_bp.login'
+    login_manager.login_view = 'auth.login'  # Set this to your actual login route
 
-    from .models import User
+    with app.app_context():
+        from .models import User  # Import here to avoid circular import
 
-    @login_manager.user_loader
-    def load_user(user_id):
-        return db.session.get(User, int(user_id))
+        @login_manager.user_loader
+        def load_user(user_id):
+            return db.session.get(User, int(user_id))
 
-    from .routes import register_routes
-    register_routes(app)
+        from .routes import register_routes
+        register_routes(app)
+
+        db.create_all()  # optional: create tables if not already created
 
     return app
-

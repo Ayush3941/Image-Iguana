@@ -7,4 +7,6 @@ Flask-SQLAlchemy
 flask_wtf
 Pillow
 email_validator
+python-dotenv
+psycopg2-binary
 
