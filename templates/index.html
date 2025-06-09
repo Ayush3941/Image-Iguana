@@ -17,10 +17,109 @@
 
     <h1 class="fs-3 text">ImageIguana - Edit your Image online!</h1>
 
-  <form method="POST"  action="{{ url_for('image.edit') }}" enctype="multipart/form-data">
+  <form method="POST" action="{{ url_for('image.edit') }}" enctype="multipart/form-data">
     {{ form.hidden_tag() }}
 
     <div class="mb-3">
         {{ form.file.label(class="form-label my-2") }}
         {{ form.file(class="form-control", id="formFile", onchange="previewImage(event)", accept=".jpg,.jpeg,.png,.gif,.webp") }}
-        <img id="preview" src="#" alt="Image Preview" s
+        <img id="preview" src="#" alt="Image Preview" style="display:none; max-width:300px; margin-top:10px;" />
+        <div class="form-text text-muted">You can select multiple files by holding Ctrl (or Cmd on Mac).</div>
+    </div>
+
+    <div class="form-floating mb-3">
+        {{ form.format_conversion(class="form-select", id="formatConversionSelect") }}
+        <label for="formatConversionSelect">Select Format Conversion</label>
+    </div>
+
+    <div class="form-floating mb-3">
+        {{ form.image_processing(class="form-select", id="imageProcessingSelect") }}
+        <label for="imageProcessingSelect">Select Image Processing Option</label>
+    </div>
+
+    {{ form.submit(class="btn btn-success my-4") }}
+  </form>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/caman@4.1.2/dist/caman.full.min.js"></script>
+
+<script>
+function previewImage(event) {
+    const preview = document.getElementById('preview');
+    const file = event.target.files[0];
+    if (file) {
+        preview.src = URL.createObjectURL(file);
+        preview.style.display = 'block';
+    } else {
+        preview.src = '#';
+        preview.style.display = 'none';
+    }
+}
+</script>
+
+<script>
+const preview = document.getElementById('preview');
+const imageProcessingSelect = document.getElementById('imageProcessingSelect');
+let originalSrc = null;
+
+function previewImage(event) {
+  const file = event.target.files[0];
+  if (file) {
+    const url = URL.createObjectURL(file);
+    preview.src = url;
+    preview.style.display = 'block';
+    originalSrc = url;
+    imageProcessingSelect.value = "default";
+  } else {
+    preview.src = '#';
+    preview.style.display = 'none';
+  }
+}
+
+function applyFilter() {
+  if (!originalSrc) return;
+
+  Caman('#preview', originalSrc, function () {
+    this.revert(false);
+
+    const val = imageProcessingSelect.value;
+
+    switch(val) {
+      case 'cgray':
+        this.greyscale();
+        break;
+
+      case 'histeq':
+        this.greyscale().contrast(20).noise(10);
+        break;
+
+      case 'blur':
+        this.stackBlur(5);
+        break;
+
+      case 'canny':
+        this.contrast(40).posterize(2);
+        break;
+
+      case 'rotate':
+        this.rotate(90);
+        break;
+
+      case 'sharpen':
+        this.sharpen(15);
+        break;
+
+      default:
+        break;
+    }
+
+    this.render();
+  });
+}
+
+document.getElementById('formFile').addEventListener('change', previewImage);
+imageProcessingSelect.addEventListener('change', applyFilter);
+</script>
+
+{% endblock %}
