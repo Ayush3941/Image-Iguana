@@ -1,4 +1,4 @@
- Byte-compiled / optimized / DLL files
+# Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
@@ -176,7 +176,7 @@ cython_debug/
 # Visual Studio Code
 #  Visual Studio Code specific template is maintained in a separate VisualStudioCode.gitignore 
 #  that can be found at https://github.com/github/gitignore/blob/main/Global/VisualStudioCode.gitignore
-#  and can be added to the global gitignore or merged into this file. However, if you prefer, 
+#  and can be merged into this file. However, if you prefer, 
 #  you could uncomment the following to ignore the entire vscode folder
 # .vscode/
 
@@ -193,10 +193,8 @@ cython_debug/
 .cursorignore
 .cursorindexingignore
 
-
 ## custom gitignore
 
 uploads/
-static/*.*
 static/uploads
 instance/users.db
