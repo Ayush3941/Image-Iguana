@@ -6,3 +6,4 @@ Flask-Login
 Flask-SQLAlchemy
 flask_wtf
 Pillow
+pytest

@@ -41,6 +41,11 @@ Follow these steps to get started with **Image Iguana**:
    ```bash
    python main.py
    ```
+5. To run tests
+
+    ```bash
+   pytest
+   ```
 
 ---
 
