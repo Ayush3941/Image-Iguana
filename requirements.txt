@@ -6,3 +6,6 @@ Flask-Login
 Flask-SQLAlchemy
 flask_wtf
 Pillow
+python-dotenv
+psycopg2-binary
+gunicorn
