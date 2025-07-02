@@ -53,6 +53,11 @@ You can find this in your Render dashboard under Databases â†’ Connection Info â
    ```bash
    python main.py
    ```
+5. To run tests
+
+    ```bash
+   pytest
+   ```
 
 ---
 
